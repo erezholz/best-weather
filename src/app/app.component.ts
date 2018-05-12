@@ -16,11 +16,5 @@ export class AppComponent {
 
   }
 
-  public onChange(evt){
-    this.dataService.setNumberOfValues(this.numberofresults);
-  }
   
-  public onGenderChange(evt){
-    this.dataService.setGender(this.gender == "male");
-  }
 }

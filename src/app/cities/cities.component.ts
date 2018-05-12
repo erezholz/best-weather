@@ -22,15 +22,19 @@ export class CitiesComponent implements OnInit {
   map : any;
   gender : string = "male";
   numberofResults : number = 10;
+
+  colors : string[] = [];
+  colorRed = "red";
+
   ngOnInit() {
     this.dataService.getCities().subscribe((cities)=>{
-      var result : string = cities.text();
-      var resultLength : number = result.length;
-      result = result.substring(14, resultLength-1);
-      var myJSON : any = JSON.parse(result);
-      this.origCitiesList = myJSON.list;
+      this.origCitiesList = cities;
       this.origCitiesList = _.sortBy(this.origCitiesList, function(item) { 
+          if(item.main.humidity < 100){
             return item.main.temp + "_" + item.main.humidity;
+          } else{
+            return item.main.temp + "_9100";
+          }
         });
        this.updateList();  
      });    
@@ -77,6 +81,7 @@ export class CitiesComponent implements OnInit {
 
     this.cities = [];
     for(var i=0;i<this.numberofResults;i++){
+      this.origCitiesList[start+i].mapColor = this.colors[i];
       this.cities.push(this.origCitiesList[start+i]);
     }
    
@@ -91,18 +96,28 @@ export class CitiesComponent implements OnInit {
         center: [51.505, -0.09],
         zoom: 1
       });
+      L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+      }).addTo(this.map);
     }
-    L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-    }).addTo(this.map);
+    var i : number = this.cities.length;
     for(let city of this.cities){
-      var layer : any = L.circleMarker([city.coord.Lat, city.coord.Lon], {color: "#3388ff"}).addTo(this.map); 
+      var layer : any = L.marker([city.coord.Lat, city.coord.Lon], {color: city.mapColor, radius: 50}).addTo(this.map); 
+      layer.bindPopup("City/Station Name:<b>"+ city.name +"</b><br>Temp: "+ city.main.temp + " C<br> Humidity: " + city.main.humidity + " %");
       city.mapLayer = layer;
+      i--;
     }
+
+    this.map.setZoomAround([this.cities[0].coord.Lat, this.cities[0].coord.Lon], 7);
+    this.cities[0].mapLayer.openPopup();
 
     return 1;
   }
 
+  public flyTo(city : City){
+    this.map.flyTo(city.mapLayer.getLatLng(), 9);
+    city.mapLayer.openPopup();
+  }
 }
 
 interface City{

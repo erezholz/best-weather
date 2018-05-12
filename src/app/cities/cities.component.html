@@ -1,8 +1,8 @@
-<div *ngIf="dataLoaded; else elseBlock">
-    <div>
+<div *ngIf="dataLoaded; else elseBlock" class="setting">
+    <div >
         Select number of city/stations to show:&nbsp; 
         <p></p>
-        <input type="number"min="1" max="100" [(ngModel)]="numberofResults" name="numberofResults" (input)="onChange($evt)">&nbsp;
+        <input style="position: absolute; top: 47px; left: 150px" type="number"min="1" max="100" [(ngModel)]="numberofResults" name="numberofResults" (input)="onChange($evt)">&nbsp;
         <input type="range" min="1" max="100" [(ngModel)]="numberofResults" name="numberofResults" (input)="onChange($evt)">
     </div>
     <div>
@@ -11,21 +11,26 @@
         Show optimum weather for: 
         <input type="radio" name="gender" [(ngModel)]="gender" value="male"  (change)="onGenderChange(evt)"  checked> Male
         <input type="radio" name="gender" [(ngModel)]="gender" value="female" (change)="onGenderChange(evt)"> Female
+        <br><br>Click on a table row to locate on map
     </div>
     </div>
     <div style="overflow: auto; height:200px;max-height: 200px;">
   <table>
+      <thead>
     <TR >
-        <th class="header">City/Station Name</th>
+        <th class="header">City/Station Name:
+        </th>
         <th class="header">Temperture</th>
         <th class="header">Humidity</th>
     </TR>
-        
-      <TR *ngFor="let city of cities" >
+        </thead>
+        <tbody>
+      <TR *ngFor="let city of cities" (click)="flyTo(city)">
         <TD>{{city.name}}</TD>
         <TD>{{city.main.temp}}</TD>
         <TD>{{city.main.humidity}}</TD>
       </TR>
+    </tbody>
     </table>
     </div>
 
