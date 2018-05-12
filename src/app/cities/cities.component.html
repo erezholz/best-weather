@@ -1,6 +1,6 @@
 <div *ngIf="dataLoaded; else elseBlock" class="setting">
     <div >
-        Select number of city/stations to show:&nbsp; 
+        Select number of cities/stations to show(1-100):&nbsp; 
         <p></p>
         <input style="position: absolute; top: 47px; left: 150px" type="number"min="1" max="100" [(ngModel)]="numberofResults" name="numberofResults" (input)="onChange($evt)">&nbsp;
         <input type="range" min="1" max="100" [(ngModel)]="numberofResults" name="numberofResults" (input)="onChange($evt)">
